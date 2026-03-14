@@ -14,6 +14,24 @@ enum Format {
     Properties,
 }
 
+#[derive(Copy, Clone, PartialEq, Eq, ValueEnum)]
+enum TargetMode {
+    #[value(alias = "rust")]
+    Rust,
+    #[value(alias = "typescript")]
+    Typescript,
+    #[value(alias = "typescript/typealias")]
+    TypescriptTypeAlias,
+    #[value(alias = "kotlin/jackson")]
+    KotlinJackson,
+    #[value(alias = "kotlin/kotlinx")]
+    KotlinKotlinx,
+    #[value(alias = "json_schema")]
+    JsonSchema,
+    #[value(alias = "shape")]
+    Shape,
+}
+
 #[derive(Parser)]
 #[command(name = "mold")]
 struct Cli {
@@ -28,6 +46,9 @@ struct Cli {
 
     #[arg(short, long, default_value = "Root")]
     name: String,
+
+    #[arg(short, long, value_enum, default_value = "rust")]
+    lang: TargetMode,
 }
 
 fn parse_to_json(input: &str, format: Format) -> Result<Value, Box<dyn std::error::Error>> {
@@ -108,7 +129,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let json_string = serde_json::to_string(&final_json)?;
     let mut options = Options::default();
-    options.output_mode = OutputMode::Rust;
+    options.output_mode = match cli.lang {
+        TargetMode::Rust => OutputMode::Rust,
+        TargetMode::Typescript => OutputMode::Typescript,
+        TargetMode::TypescriptTypeAlias => OutputMode::TypescriptTypeAlias,
+        TargetMode::KotlinJackson => OutputMode::KotlinJackson,
+        TargetMode::KotlinKotlinx => OutputMode::KotlinKotlinx,
+        TargetMode::JsonSchema => OutputMode::JsonSchema,
+        TargetMode::Shape => OutputMode::Shape,
+    };
 
     let code = codegen(&cli.name, &json_string, options)?;
     println!("{}", code);
