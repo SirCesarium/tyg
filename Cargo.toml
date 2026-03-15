@@ -1,7 +1,24 @@
 [package]
-name = "structify"
+name = "mold"
 version = "0.1.0"
 edition = "2024"
+authors = ["SirCesarium"]
+description = "A fast CLI tool to transform JSON, YAML, TOML, and XML into type-safe code for Rust, TypeScript, and more."
+license = "MIT"
+repository = "https://github.com/SirCesarium/mold"
+readme = "README.md"
+keywords = [
+  "codegen",
+  "json-to-rust",
+  "schema-generator",
+  "serialization",
+  "cli",
+]
+categories = [
+  "command-line-utilities",
+  "development-tools::code-generators",
+  "parsing",
+]
 
 [dependencies]
 clap = { version = "4.6.0", features = ["derive"] }
