@@ -1,11 +1,11 @@
 [package]
-name = "mold"
+name = "type-forge"
 version = "0.1.0"
 edition = "2024"
 authors = ["SirCesarium"]
 description = "A fast CLI tool to transform JSON, YAML, TOML, and XML into type-safe code for Rust, TypeScript, and more."
 license = "MIT"
-repository = "https://github.com/SirCesarium/mold"
+repository = "https://github.com/SirCesarium/type-forge"
 readme = "README.md"
 keywords = [
   "codegen",

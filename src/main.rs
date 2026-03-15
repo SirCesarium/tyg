@@ -33,7 +33,7 @@ enum TargetMode {
 }
 
 #[derive(Parser)]
-#[command(name = "mold")]
+#[command(name = "type-forge")]
 struct Cli {
     #[arg(help = "File paths to read from")]
     sources: Vec<String>,

@@ -1,8 +1,8 @@
-# 🏭 Mold
+# 🏭 Type-Forge
 
 A fast CLI tool to transform JSON, YAML, TOML, and XML into type-safe code for Rust, TypeScript, and more.
 
-**Mold** is a data-to-code pipeline that ingest structured data from multiple sources and "molds" it into usable language models. It is designed to be the bridge between raw configuration/API responses and type-safe implementation.
+**Type-Forge** is a data-to-code pipeline that ingest structured data from multiple sources and "type-forges" it into usable language models. It is designed to be the bridge between raw configuration/API responses and type-safe implementation.
 
 ## Features
 
@@ -16,8 +16,8 @@ A fast CLI tool to transform JSON, YAML, TOML, and XML into type-safe code for R
 
 ```bash
 # Clone the repository
-git clone https://github.com/SirCesarium/mold
-cd mold
+git clone https://github.com/SirCesarium/type-forge
+cd type-forge
 
 # Build and install
 cargo install --path .
@@ -28,10 +28,10 @@ cargo install --path .
 
 ### Transform local files
 
-Mold detects the format and generates Rust structs by default.
+Type-Forge detects the format and generates Rust structs by default.
 
 ```bash
-mold config.yaml settings.toml
+type-forge config.yaml settings.toml
 
 ```
 
@@ -40,7 +40,7 @@ mold config.yaml settings.toml
 Specify the format if the URL doesn't provide it.
 
 ```bash
-mold --url "https://api.example.com/data" --format json --lang typescript
+type-forge --url "https://api.example.com/data" --format json --lang typescript
 
 ```
 
@@ -49,7 +49,7 @@ mold --url "https://api.example.com/data" --format json --lang typescript
 Analyze files inside compressed archives without extraction.
 
 ```bash
-zipcrawl archive.zip cat internal_data.xml | mold --format xml --name DataModel
+zipcrawl archive.zip cat internal_data.xml | type-forge --format xml --name DataModel
 
 ```
 
@@ -58,7 +58,7 @@ zipcrawl archive.zip cat internal_data.xml | mold --format xml --name DataModel
 Ingest multiple sources to generate a type that satisfies all samples.
 
 ```bash
-mold sample1.json sample2.json --lang rust > models.rs
+type-forge sample1.json sample2.json --lang rust > models.rs
 
 ```
 

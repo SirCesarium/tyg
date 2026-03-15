@@ -1379,20 +1379,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "mold"
-version = "0.1.0"
-dependencies = [
- "clap",
- "java-properties",
- "json_typegen_shared",
- "quick-xml",
- "reqwest 0.13.2",
- "serde_json",
- "serde_yaml",
- "toml",
-]
-
-[[package]]
 name = "native-tls"
 version = "0.2.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2765,6 +2751,20 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "283d3b89e1368717881a9d51dad843cc435380d8109c9e47d38780a324698d8b"
 dependencies = [
  "cfg-if 0.1.10",
+]
+
+[[package]]
+name = "type-forge"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "java-properties",
+ "json_typegen_shared",
+ "quick-xml",
+ "reqwest 0.13.2",
+ "serde_json",
+ "serde_yaml",
+ "toml",
 ]
 
 [[package]]

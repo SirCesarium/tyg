@@ -17,33 +17,33 @@ jobs:
         include:
           - target: x86_64-unknown-linux-gnu
             os: ubuntu-latest
-            artifact_name: mold
-            release_name: mold-linux-amd64
+            artifact_name: type-forge
+            release_name: type-forge-linux-amd64
             use_cross: false
           - target: x86_64-unknown-linux-musl
             os: ubuntu-latest
-            artifact_name: mold
-            release_name: mold-linux-musl-amd64
+            artifact_name: type-forge
+            release_name: type-forge-linux-musl-amd64
             use_cross: false
           - target: aarch64-unknown-linux-gnu
             os: ubuntu-latest
-            artifact_name: mold
-            release_name: mold-linux-arm64
+            artifact_name: type-forge
+            release_name: type-forge-linux-arm64
             use_cross: true
           - target: x86_64-pc-windows-msvc
             os: windows-latest
-            artifact_name: mold.exe
-            release_name: mold-windows-amd64.exe
+            artifact_name: type-forge.exe
+            release_name: type-forge-windows-amd64.exe
             use_cross: false
           - target: aarch64-apple-darwin
             os: macos-latest
-            artifact_name: mold
-            release_name: mold-macos-arm64
+            artifact_name: type-forge
+            release_name: type-forge-macos-arm64
             use_cross: false
           - target: x86_64-apple-darwin
             os: macos-latest
-            artifact_name: mold
-            release_name: mold-macos-intel
+            artifact_name: type-forge
+            release_name: type-forge-macos-intel
             use_cross: false
 
     steps:
@@ -128,33 +128,33 @@ jobs:
         include:
           - target: x86_64-unknown-linux-gnu
             os: ubuntu-latest
-            artifact_name: mold
-            release_name: mold-linux-amd64
+            artifact_name: type-forge
+            release_name: type-forge-linux-amd64
             use_cross: false
           - target: x86_64-unknown-linux-musl
             os: ubuntu-latest
-            artifact_name: mold
-            release_name: mold-linux-musl-amd64
+            artifact_name: type-forge
+            release_name: type-forge-linux-musl-amd64
             use_cross: false
           - target: aarch64-unknown-linux-gnu
             os: ubuntu-latest
-            artifact_name: mold
-            release_name: mold-linux-arm64
+            artifact_name: type-forge
+            release_name: type-forge-linux-arm64
             use_cross: true
           - target: x86_64-pc-windows-msvc
             os: windows-latest
-            artifact_name: mold.exe
-            release_name: mold-windows-amd64.exe
+            artifact_name: type-forge.exe
+            release_name: type-forge-windows-amd64.exe
             use_cross: false
           - target: aarch64-apple-darwin
             os: macos-latest
-            artifact_name: mold
-            release_name: mold-macos-arm64
+            artifact_name: type-forge
+            release_name: type-forge-macos-arm64
             use_cross: false
           - target: x86_64-apple-darwin
             os: macos-latest
-            artifact_name: mold
-            release_name: mold-macos-intel
+            artifact_name: type-forge
+            release_name: type-forge-macos-intel
             use_cross: false
 
     steps:
