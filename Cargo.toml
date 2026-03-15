@@ -23,9 +23,14 @@ categories = [
 [dependencies]
 clap = { version = "4.6.0", features = ["derive"] }
 java-properties = "2.0.0"
-json_typegen_shared = "0.7.0"
+json_typegen_shared = { version = "0.7.0", default-features = false }
 quick-xml = { version = "0.39.2", features = ["serialize"] }
-reqwest = { version = "0.13.2", features = ["blocking"] }
+reqwest = { version = "0.13.2", default-features = false, features = [
+  "blocking",
+  "rustls",
+  "charset",
+  "http2",
+] }
 serde_json = "1.0.149"
 serde_yaml = "0.9.34"
 toml = "1.0.6"
