@@ -14,11 +14,7 @@ keywords = [
   "serialization",
   "cli",
 ]
-categories = [
-  "command-line-utilities",
-  "development-tools::code-generators",
-  "parsing",
-]
+categories = ["command-line-utilities", "development-tools", "parsing"]
 
 [dependencies]
 clap = { version = "4.6.0", features = ["derive"] }
