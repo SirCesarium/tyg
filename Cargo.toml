@@ -20,7 +20,7 @@ categories = ["command-line-utilities", "development-tools", "parsing"]
 clap = { version = "4.6.0", features = ["derive"] }
 java-properties = "2.0.0"
 json_typegen_shared = { version = "0.7.0", default-features = false }
-quick-xml = { version = "0.39.2", features = ["serialize"] }
+quick-xml = { version = "0.39.4", features = ["serialize"] }
 reqwest = { version = "0.13.2", default-features = false, features = [
   "blocking",
   "rustls",
