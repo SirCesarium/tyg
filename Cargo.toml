@@ -17,7 +17,7 @@ keywords = [
 categories = ["command-line-utilities", "development-tools", "parsing"]
 
 [dependencies]
-clap = { version = "4.6.0", features = ["derive"] }
+clap = { version = "4.6.1", features = ["derive"] }
 java-properties = "2.0.0"
 json_typegen_shared = { version = "0.7.0", default-features = false }
 quick-xml = { version = "0.39.4", features = ["serialize"] }
