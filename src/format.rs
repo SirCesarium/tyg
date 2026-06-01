@@ -1,7 +1,7 @@
 use crate::cli::Format;
 use crate::error::CliError;
 use quick_xml::de;
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 use std::collections::HashMap;
 use std::path::Path;
 

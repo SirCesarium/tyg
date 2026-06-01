@@ -1,6 +1,6 @@
 use crate::cli::TargetMode;
 use crate::error::CliError;
-use json_typegen_shared::{codegen, Options, OutputMode};
+use json_typegen_shared::{Options, OutputMode, codegen};
 use serde_json::Value;
 
 pub fn generate(name: &str, json: &Value, mode: TargetMode) -> Result<String, CliError> {
