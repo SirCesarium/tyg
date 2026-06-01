@@ -1,22 +1,18 @@
 #![allow(clippy::unwrap_used, clippy::expect_used)]
 
 use std::io::Write;
-use std::process::Command;
+use std::process::{Command, Stdio};
 
-const BIN: &str = env!("CARGO_BIN_EXE_type-forge");
-
-fn run_stdin(input: &[u8], args: &[&str]) -> Command {
-    let mut cmd = Command::new(BIN);
-    cmd.args(args)
-        .stdin(std::process::Stdio::piped())
-        .stdout(std::process::Stdio::piped())
-        .stderr(std::process::Stdio::piped());
-    cmd
-}
+const BIN: &str = env!("CARGO_BIN_EXE_tyg");
 
 fn exec_stdin(input: &[u8], args: &[&str]) -> (bool, String, String) {
-    let mut cmd = run_stdin(input, args);
-    let mut child = cmd.spawn().unwrap();
+    let mut child = Command::new(BIN)
+        .args(args)
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .unwrap();
     child.stdin.take().unwrap().write_all(input).unwrap();
     let output = child.wait_with_output().unwrap();
     (
@@ -56,8 +52,8 @@ fn invalid_format_returns_error() {
 #[test]
 fn no_input_is_empty_success() {
     let mut cmd = Command::new(BIN)
-        .stdin(std::process::Stdio::piped())
-        .stdout(std::process::Stdio::piped())
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
         .spawn()
         .unwrap();
     cmd.stdin.take();
