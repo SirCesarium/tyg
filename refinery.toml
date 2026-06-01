@@ -9,13 +9,13 @@ codegenUnits = 1
 panic = "abort"
 
 [[artifacts]]
-name = "type-forge"
+name = "tyg"
 type = "bin"
 outputName = "{name}-{os}-{arch}"
 
 [[targets]]
 id = "linux-x64"
-for = "type-forge"
+for = "tyg"
 os = "linux"
 arch = ["x86_64"]
 abi = "gnu"
@@ -23,7 +23,7 @@ packages = ["bin"]
 
 [[targets]]
 id = "windows-x64"
-for = "type-forge"
+for = "tyg"
 os = "windows"
 arch = ["x86_64", "arm64"]
 abi = "msvc"
@@ -31,7 +31,7 @@ packages = ["bin"]
 
 [[targets]]
 id = "macos-all"
-for = "type-forge"
+for = "tyg"
 os = "macos"
 arch = ["x86_64", "arm64"]
 packages = ["bin"]
