@@ -10,6 +10,8 @@ jobs:
   build:
     name: ${{ matrix.artifact }} (${{ matrix.os }}-${{ matrix.arch }}-${{ matrix.abi || 'default' }})
     runs-on: ${{ matrix.runs_on }}
+    permissions:
+      contents: read
     env:
       CARGO_PROFILE_RELEASE_STRIP: symbols
       CARGO_PROFILE_RELEASE_LTO: "true"
@@ -19,13 +21,13 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - artifact: type-forge
+          - artifact: tyg
             artifact_type: bin
             os: linux
             arch: x86_64
             runs_on: ubuntu-24.04
-            output_name: type-forge-linux-x86_64
-            artifact_bin: type-forge
+            output_name: tyg-linux-x86_64
+            artifact_bin: tyg
             target_triple: x86_64-unknown-linux-gnu
             package_type: tar.gz
             packages:
@@ -44,13 +46,13 @@ jobs:
             features_str: ""
             default_features: true
             abi: gnu
-          - artifact: type-forge
+          - artifact: tyg
             artifact_type: bin
             os: windows
             arch: x86_64
             runs_on: windows-2025
-            output_name: type-forge-windows-x86_64
-            artifact_bin: type-forge
+            output_name: tyg-windows-x86_64
+            artifact_bin: tyg
             target_triple: x86_64-pc-windows-msvc
             package_type: zip
             packages:
@@ -69,13 +71,13 @@ jobs:
             features_str: ""
             default_features: true
             abi: msvc
-          - artifact: type-forge
+          - artifact: tyg
             artifact_type: bin
             os: windows
             arch: arm64
             runs_on: windows-11-arm
-            output_name: type-forge-windows-arm64
-            artifact_bin: type-forge
+            output_name: tyg-windows-arm64
+            artifact_bin: tyg
             target_triple: aarch64-pc-windows-msvc
             package_type: zip
             packages:
@@ -94,13 +96,13 @@ jobs:
             features_str: ""
             default_features: true
             abi: msvc
-          - artifact: type-forge
+          - artifact: tyg
             artifact_type: bin
             os: macos
             arch: x86_64
             runs_on: macos-26
-            output_name: type-forge-macos-x86_64
-            artifact_bin: type-forge
+            output_name: tyg-macos-x86_64
+            artifact_bin: tyg
             target_triple: x86_64-apple-darwin
             package_type: tar.gz
             packages:
@@ -118,13 +120,13 @@ jobs:
             features: []
             features_str: ""
             default_features: true
-          - artifact: type-forge
+          - artifact: tyg
             artifact_type: bin
             os: macos
             arch: arm64
             runs_on: macos-26
-            output_name: type-forge-macos-arm64
-            artifact_bin: type-forge
+            output_name: tyg-macos-arm64
+            artifact_bin: tyg
             target_triple: aarch64-apple-darwin
             package_type: tar.gz
             packages:
