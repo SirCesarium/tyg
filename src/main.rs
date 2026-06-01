@@ -1,67 +1,38 @@
-use clap::{Parser, ValueEnum};
+mod cli;
+mod error;
+
+use clap::Parser;
+use cli::{Cli, Format};
+use error::CliError;
 use json_typegen_shared::{codegen, Options, OutputMode};
 use quick_xml::de;
 use reqwest::blocking;
 use serde_json::{json, Value};
 use std::collections::HashMap;
-use std::error::Error;
 use std::fs;
 use std::io::{self, Read};
+use std::path::Path;
 
-#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
-enum Format {
-    Json,
-    Yaml,
-    Toml,
-    Xml,
-    Properties,
-}
-
-#[derive(Copy, Clone, PartialEq, Eq, ValueEnum)]
-enum TargetMode {
-    #[value(alias = "rust")]
-    Rust,
-    #[value(alias = "typescript")]
-    Typescript,
-    #[value(alias = "typescript/typealias")]
-    TypescriptTypeAlias,
-    #[value(alias = "kotlin/jackson")]
-    KotlinJackson,
-    #[value(alias = "kotlin/kotlinx")]
-    KotlinKotlinx,
-    #[value(alias = "json_schema")]
-    JsonSchema,
-    #[value(alias = "shape")]
-    Shape,
-}
-
-#[derive(Parser)]
-#[command(name = "type-forge")]
-struct Cli {
-    #[arg(help = "File paths to read from")]
-    sources: Vec<String>,
-
-    #[arg(short, long, help = "URL to fetch data from")]
-    url: Option<String>,
-
-    #[arg(short, long, value_enum)]
-    format: Option<Format>,
-
-    #[arg(short, long, default_value = "Root")]
-    name: String,
-
-    #[arg(short, long, value_enum, default_value = "rust")]
-    lang: TargetMode,
-}
-
-fn parse_to_json(input: &str, format: Format) -> Result<Value, Box<dyn Error>> {
+fn parse_to_json(input: &str, format: Format) -> Result<Value, CliError> {
     match format {
         Format::Json => Ok(serde_json::from_str(input)?),
-        Format::Yaml => Ok(serde_yaml::from_str(input)?),
-        Format::Toml => Ok(toml::from_str(input)?),
-        Format::Xml => Ok(de::from_str(input)?),
+        Format::Yaml => serde_yaml::from_str(input).map_err(|e| CliError::Parse {
+            format: "yaml".into(),
+            msg: e.to_string(),
+        }),
+        Format::Toml => toml::from_str(input).map_err(|e| CliError::Parse {
+            format: "toml".into(),
+            msg: e.to_string(),
+        }),
+        Format::Xml => de::from_str(input).map_err(|e| CliError::Parse {
+            format: "xml".into(),
+            msg: e.to_string(),
+        }),
         Format::Properties => {
-            let props = java_properties::read(input.as_bytes())?;
+            let props = java_properties::read(input.as_bytes()).map_err(|e| CliError::Parse {
+                format: "properties".into(),
+                msg: e.to_string(),
+            })?;
             let mut map = HashMap::new();
             for (k, v) in props {
                 if let Ok(b) = v.parse::<bool>() {
@@ -77,31 +48,28 @@ fn parse_to_json(input: &str, format: Format) -> Result<Value, Box<dyn Error>> {
     }
 }
 
-fn main() -> Result<(), Box<dyn Error>> {
-    let cli = Cli::parse();
+fn detect_format(path: &str) -> Format {
+    let ext = Path::new(path).extension().and_then(|e| e.to_str());
+    match ext {
+        Some("json") => Format::Json,
+        Some("yaml") | Some("yml") => Format::Yaml,
+        Some("toml") => Format::Toml,
+        Some("xml") => Format::Xml,
+        Some("properties") => Format::Properties,
+        _ => Format::Json,
+    }
+}
+
+fn run(cli: &Cli) -> Result<(), CliError> {
     let mut json_samples = Vec::new();
 
-    if let Some(url) = cli.url {
-        let res = blocking::get(&url)?.text()?;
+    if let Some(url) = &cli.url {
+        let res = blocking::get(url)?.text()?;
         json_samples.push(parse_to_json(&res, cli.format.unwrap_or(Format::Json))?);
     } else if !cli.sources.is_empty() {
         for path in &cli.sources {
             let res = fs::read_to_string(path)?;
-            let fmt = cli.format.unwrap_or_else(|| {
-                if path.ends_with(".json") {
-                    Format::Json
-                } else if path.ends_with(".yaml") || path.ends_with(".yml") {
-                    Format::Yaml
-                } else if path.ends_with(".toml") {
-                    Format::Toml
-                } else if path.ends_with(".xml") {
-                    Format::Xml
-                } else if path.ends_with(".properties") {
-                    Format::Properties
-                } else {
-                    Format::Json
-                }
-            });
+            let fmt = cli.format.unwrap_or_else(|| detect_format(path));
             json_samples.push(parse_to_json(&res, fmt)?);
         }
     } else {
@@ -133,17 +101,24 @@ fn main() -> Result<(), Box<dyn Error>> {
     let json_string = serde_json::to_string(&final_json)?;
     let mut options = Options::default();
     options.output_mode = match cli.lang {
-        TargetMode::Rust => OutputMode::Rust,
-        TargetMode::Typescript => OutputMode::Typescript,
-        TargetMode::TypescriptTypeAlias => OutputMode::TypescriptTypeAlias,
-        TargetMode::KotlinJackson => OutputMode::KotlinJackson,
-        TargetMode::KotlinKotlinx => OutputMode::KotlinKotlinx,
-        TargetMode::JsonSchema => OutputMode::JsonSchema,
-        TargetMode::Shape => OutputMode::Shape,
+        cli::TargetMode::Rust => OutputMode::Rust,
+        cli::TargetMode::Typescript => OutputMode::Typescript,
+        cli::TargetMode::TypescriptTypeAlias => OutputMode::TypescriptTypeAlias,
+        cli::TargetMode::KotlinJackson => OutputMode::KotlinJackson,
+        cli::TargetMode::KotlinKotlinx => OutputMode::KotlinKotlinx,
+        cli::TargetMode::JsonSchema => OutputMode::JsonSchema,
+        cli::TargetMode::Shape => OutputMode::Shape,
     };
 
-    let code = codegen(&cli.name, &json_string, options)?;
-    println!("{}", code);
+    let code =
+        codegen(&cli.name, &json_string, options).map_err(|e| CliError::Codegen(e.to_string()))?;
+    println!("{code}");
 
+    Ok(())
+}
+
+fn main() -> miette::Result<()> {
+    let cli: Cli = cli::Cli::parse();
+    run(&cli).map_err(miette::Report::from)?;
     Ok(())
 }
