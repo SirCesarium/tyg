@@ -8,7 +8,7 @@ pub enum CliError {
     Io(#[from] io::Error),
 
     #[error("failed to parse {format} input: {msg}")]
-    Parse { format: String, msg: String },
+    Parse { format: &'static str, msg: String },
 
     #[error("network request failed")]
     Network(#[from] reqwest::Error),
