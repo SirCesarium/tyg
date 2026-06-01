@@ -1,7 +1,7 @@
 use clap::{Parser, ValueEnum};
 use std::fmt;
 
-#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
 pub enum Format {
     Json,
     Yaml,
