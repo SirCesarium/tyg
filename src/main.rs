@@ -1,7 +1,10 @@
 use clap::{Parser, ValueEnum};
-use json_typegen_shared::{Options, OutputMode, codegen};
-use serde_json::{Value, json};
+use json_typegen_shared::{codegen, Options, OutputMode};
+use quick_xml::de;
+use reqwest::blocking;
+use serde_json::{json, Value};
 use std::collections::HashMap;
+use std::error::Error;
 use std::fs;
 use std::io::{self, Read};
 
@@ -51,12 +54,12 @@ struct Cli {
     lang: TargetMode,
 }
 
-fn parse_to_json(input: &str, format: Format) -> Result<Value, Box<dyn std::error::Error>> {
+fn parse_to_json(input: &str, format: Format) -> Result<Value, Box<dyn Error>> {
     match format {
         Format::Json => Ok(serde_json::from_str(input)?),
         Format::Yaml => Ok(serde_yaml::from_str(input)?),
         Format::Toml => Ok(toml::from_str(input)?),
-        Format::Xml => Ok(quick_xml::de::from_str(input)?),
+        Format::Xml => Ok(de::from_str(input)?),
         Format::Properties => {
             let props = java_properties::read(input.as_bytes())?;
             let mut map = HashMap::new();
@@ -74,12 +77,12 @@ fn parse_to_json(input: &str, format: Format) -> Result<Value, Box<dyn std::erro
     }
 }
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+fn main() -> Result<(), Box<dyn Error>> {
     let cli = Cli::parse();
     let mut json_samples = Vec::new();
 
     if let Some(url) = cli.url {
-        let res = reqwest::blocking::get(&url)?.text()?;
+        let res = blocking::get(&url)?.text()?;
         json_samples.push(parse_to_json(&res, cli.format.unwrap_or(Format::Json))?);
     } else if !cli.sources.is_empty() {
         for path in &cli.sources {
@@ -144,4 +147,3 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
-
