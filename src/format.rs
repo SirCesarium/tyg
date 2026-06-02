@@ -5,6 +5,28 @@ use serde_json::{Value, json};
 use std::collections::HashMap;
 use std::path::Path;
 
+fn clean_xml_value(v: &mut Value) {
+    match v {
+        Value::Object(map) => {
+            let keys: Vec<String> = map.keys().cloned().collect();
+            for key in keys {
+                if let Some(mut val) = map.remove(&key) {
+                    clean_xml_value(&mut val);
+                    let new_key = key.strip_prefix('@').unwrap_or(&key);
+                    let new_key = if new_key == "$text" { "text" } else { new_key };
+                    map.insert(new_key.to_string(), val);
+                }
+            }
+        }
+        Value::Array(arr) => {
+            for item in arr.iter_mut() {
+                clean_xml_value(item);
+            }
+        }
+        _ => {}
+    }
+}
+
 pub fn parse_to_json(input: &str, format: Format) -> Result<Value, CliError> {
     match format {
         Format::Json => Ok(serde_json::from_str(input)?),
@@ -16,10 +38,14 @@ pub fn parse_to_json(input: &str, format: Format) -> Result<Value, CliError> {
             format: "toml",
             msg: e.to_string(),
         }),
-        Format::Xml => de::from_str(input).map_err(|e| CliError::Parse {
-            format: "xml",
-            msg: e.to_string(),
-        }),
+        Format::Xml => {
+            let mut v: Value = de::from_str(input).map_err(|e| CliError::Parse {
+                format: "xml",
+                msg: e.to_string(),
+            })?;
+            clean_xml_value(&mut v);
+            Ok(v)
+        }
         Format::Properties => {
             let props = java_properties::read(input.as_bytes()).map_err(|e| CliError::Parse {
                 format: "properties",
@@ -130,7 +156,17 @@ mod tests {
     #[test]
     fn parse_xml_ok() {
         let v = parse_to_json("<root><a>1</a><b>x</b></root>", Format::Xml).unwrap();
-        assert_eq!(v, json!({"a": {"$text": "1"}, "b": {"$text": "x"}}));
+        assert_eq!(v, json!({"a": {"text": "1"}, "b": {"text": "x"}}));
+    }
+
+    #[test]
+    fn parse_xml_with_attrs() {
+        let v = parse_to_json(
+            r#"<item id="5"><name lang="en">foo</name></item>"#,
+            Format::Xml,
+        )
+        .unwrap();
+        assert_eq!(v, json!({"name": {"lang": "en", "text": "foo"}, "id": "5"}));
     }
 
     #[test]
