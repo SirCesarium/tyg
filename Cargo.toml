@@ -1,9 +1,9 @@
 [package]
 name = "tyg"
-version = "0.5.0"
+version = "0.6.0"
 edition = "2024"
 authors = ["SirCesarium"]
-description = "A fast CLI tool to transform JSON, YAML, TOML, and XML into type-safe code for Rust, TypeScript, and more."
+description = "Generate types from several data sources to multiple languages"
 license = "MIT"
 repository = "https://github.com/SirCesarium/type-forge"
 readme = "README.md"
