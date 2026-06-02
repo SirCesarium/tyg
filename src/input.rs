@@ -8,9 +8,11 @@ use std::io::{self, Read};
 pub fn collect_samples(cli: &Cli) -> Result<Vec<serde_json::Value>, CliError> {
     let mut samples = Vec::new();
 
-    if let Some(url) = &cli.url {
-        let res = blocking::get(url)?.text()?;
-        samples.extend(format::parse_all(&res, cli.format.unwrap_or(Format::Json))?);
+    if !cli.url.is_empty() {
+        for url in &cli.url {
+            let res = blocking::get(url)?.text()?;
+            samples.extend(format::parse_all(&res, cli.format.unwrap_or(Format::Json))?);
+        }
     } else if !cli.sources.is_empty() {
         for path in &cli.sources {
             let content = fs::read_to_string(path)?;
