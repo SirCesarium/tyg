@@ -5,6 +5,7 @@ use serde_json::{Value, json};
 use std::collections::HashMap;
 use std::path::Path;
 
+/// Normalizes quick-xml output: strips `@` from attributes, renames `$text` to `#text`.
 fn clean_xml_value(v: &mut Value) {
     match v {
         Value::Object(map) => {
@@ -28,6 +29,11 @@ fn clean_xml_value(v: &mut Value) {
     }
 }
 
+/// Parses a single input string into a `serde_json::Value`.
+///
+/// Format-specific notes:
+/// - XML: attributes become keys, text content becomes `#text`.
+/// - Properties: booleans and numbers are auto-detected.
 pub fn parse_to_json(input: &str, format: Format) -> Result<Value, CliError> {
     match format {
         Format::Json => Ok(serde_json::from_str(input)?),
@@ -71,6 +77,10 @@ pub fn parse_to_json(input: &str, format: Format) -> Result<Value, CliError> {
     }
 }
 
+/// Parses all documents from a single input string.
+///
+/// JSON and YAML support multiple documents (streaming / `---` separator).
+/// Other formats return a single-element vec.
 pub fn parse_all(input: &str, format: Format) -> Result<Vec<Value>, CliError> {
     match format {
         Format::Json => serde_json::Deserializer::from_str(input)
@@ -87,6 +97,9 @@ pub fn parse_all(input: &str, format: Format) -> Result<Vec<Value>, CliError> {
     }
 }
 
+/// Detects the input format from a file extension.
+///
+/// Defaults to `Format::Json` when the extension is unknown or missing.
 pub fn detect_format(path: &str) -> Format {
     let ext = Path::new(path).extension().and_then(|e| e.to_str());
 

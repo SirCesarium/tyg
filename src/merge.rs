@@ -1,5 +1,10 @@
 use serde_json::Value;
 
+/// Recursively merges `incoming` into `values`.
+///
+/// - Objects: deep-merged key by key.
+/// - Arrays: concatenated.
+/// - Scalars: `incoming` replaces `values`.
 pub fn merge(values: &mut Value, incoming: Value) {
     match (values, incoming) {
         (Value::Object(existing), Value::Object(map)) => {
@@ -18,6 +23,9 @@ pub fn merge(values: &mut Value, incoming: Value) {
     }
 }
 
+/// Reduces a list of samples into a single `Value` via `merge`.
+///
+/// Returns `Null` when the input is empty.
 pub fn merge_samples(samples: Vec<Value>) -> Value {
     if samples.is_empty() {
         return Value::Null;
