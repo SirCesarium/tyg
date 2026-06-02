@@ -33,7 +33,12 @@ pub struct Cli {
     #[arg(help = "File paths to read from")]
     pub sources: Vec<String>,
 
-    #[arg(short, long, help = "URL(s) to fetch data from (comma-separated)", value_delimiter = ',')]
+    #[arg(
+        short,
+        long,
+        help = "URL(s) to fetch data from (comma-separated)",
+        value_delimiter = ','
+    )]
     pub url: Vec<String>,
 
     #[arg(short, long, value_enum)]
