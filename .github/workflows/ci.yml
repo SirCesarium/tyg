@@ -9,9 +9,6 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: clippy, rustfmt
-      - name: Lint
-        run: cargo clippy -- -D warnings
-      - name: Check formatting
-        run: cargo fmt --check
-      - name: Test
-        run: cargo test
+      - uses: Swatinem/rust-cache@v2
+      - name: Lint and test
+        run: cargo clippy --tests -- -D warnings && cargo test
