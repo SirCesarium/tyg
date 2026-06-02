@@ -67,6 +67,9 @@ Pipe data from anywhere — like [zipcrawl](https://github.com/SirCesarium/zipcr
 zipcrawl releases/*.zip cat config.yaml -q | tyg --lang typescript
 ```
 
+> [!NOTE]
+> This project is in **maintenance mode**. No new features are planned; only bug fixes and dependency updates.
+
 ## License
 
 MIT
