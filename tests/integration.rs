@@ -94,7 +94,7 @@ fn no_input_is_empty_success() {
         .stdout(Stdio::piped())
         .spawn()
         .unwrap();
-    cmd.stdin.take();
+    drop(cmd.stdin.take());
     let output = cmd.wait_with_output().unwrap();
     assert!(output.status.success());
     assert!(output.stdout.is_empty());
