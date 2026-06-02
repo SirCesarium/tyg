@@ -93,4 +93,31 @@ mod tests {
         let result = merge_samples(vec![json!([1, 2]), json!([3, 4])]);
         assert_eq!(result, json!([1, 2, 3, 4]));
     }
+
+    #[test]
+    fn merge_object_then_array_overwrites() {
+        let result = merge_samples(vec![json!({"a": 1}), json!([1, 2, 3])]);
+        assert_eq!(result, json!([1, 2, 3]));
+    }
+
+    #[test]
+    fn merge_array_then_object_overwrites() {
+        let result = merge_samples(vec![json!([1, 2]), json!({"a": 1})]);
+        assert_eq!(result, json!({"a": 1}));
+    }
+
+    #[test]
+    fn merge_deep_nested_overwrite() {
+        let result = merge_samples(vec![
+            json!({"a": {"b": {"c": 1, "d": 2}}}),
+            json!({"a": {"b": {"c": 99, "e": 3}}}),
+        ]);
+        assert_eq!(result, json!({"a": {"b": {"c": 99, "d": 2, "e": 3}}}));
+    }
+
+    #[test]
+    fn merge_null_values() {
+        let result = merge_samples(vec![json!({"a": null}), json!({"b": 1})]);
+        assert_eq!(result, json!({"a": null, "b": 1}));
+    }
 }

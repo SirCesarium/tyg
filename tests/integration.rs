@@ -50,6 +50,44 @@ fn invalid_format_returns_error() {
 }
 
 #[test]
+fn yaml_to_rust() {
+    let (ok, stdout, _) = exec_stdin(b"x: 1\ny: hello\n", &["--format", "yaml"]);
+    assert!(ok, "stdout: {stdout}");
+    assert!(stdout.contains("x"));
+    assert!(stdout.contains("y"));
+}
+
+#[test]
+fn toml_to_rust() {
+    let (ok, stdout, _) = exec_stdin(b"x = 1\ny = \"hello\"\n", &["--format", "toml"]);
+    assert!(ok, "stdout: {stdout}");
+    assert!(stdout.contains("x"));
+    assert!(stdout.contains("y"));
+}
+
+#[test]
+fn xml_to_rust() {
+    let (ok, stdout, _) = exec_stdin(b"<root><x>1</x><y>hello</y></root>", &["--format", "xml"]);
+    assert!(ok, "stdout: {stdout}");
+}
+
+#[test]
+fn properties_to_rust() {
+    let (ok, stdout, _) = exec_stdin(b"x=1\ny=hello\n", &["--format", "properties"]);
+    assert!(ok, "stdout: {stdout}");
+    assert!(stdout.contains("x"));
+    assert!(stdout.contains("y"));
+}
+
+#[test]
+fn json_stream_merges() {
+    let (ok, stdout, _) = exec_stdin(b"{\"a\":1}\n{\"b\":2}", &["--lang", "json_schema"]);
+    assert!(ok, "stdout: {stdout}");
+    assert!(stdout.contains("a"));
+    assert!(stdout.contains("b"));
+}
+
+#[test]
 fn no_input_is_empty_success() {
     let mut cmd = Command::new(BIN)
         .stdin(Stdio::piped())
