@@ -1,7 +1,7 @@
 use crate::cli::TargetMode;
 use crate::error::CliError;
 use json_typegen_shared::{Options, OutputMode, codegen};
-use serde_json::{Value, json};
+use serde_json::Value;
 
 pub fn generate(name: &str, json: &Value, mode: TargetMode) -> Result<String, CliError> {
     let json_string = serde_json::to_string(json)?;
@@ -22,6 +22,7 @@ pub fn generate(name: &str, json: &Value, mode: TargetMode) -> Result<String, Cl
 #[allow(clippy::unwrap_used)]
 mod tests {
     use super::*;
+    use serde_json::json;
 
     const JSON: &str = r#"{"name":"foo","count":42}"#;
 
