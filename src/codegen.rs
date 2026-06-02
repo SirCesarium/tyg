@@ -6,6 +6,7 @@ use serde_json::Value;
 pub fn generate(name: &str, json: &Value, mode: TargetMode) -> Result<String, CliError> {
     let json_string = serde_json::to_string(json)?;
     let mut options = Options::default();
+
     options.output_mode = match mode {
         TargetMode::Rust => OutputMode::Rust,
         TargetMode::Typescript => OutputMode::Typescript,
@@ -15,6 +16,7 @@ pub fn generate(name: &str, json: &Value, mode: TargetMode) -> Result<String, Cl
         TargetMode::JsonSchema => OutputMode::JsonSchema,
         TargetMode::Shape => OutputMode::Shape,
     };
+
     codegen(name, &json_string, options).map_err(|e| CliError::Codegen(e.to_string()))
 }
 
@@ -30,6 +32,7 @@ mod tests {
     fn generate_rust() {
         let v: Value = serde_json::from_str(JSON).unwrap();
         let code = generate("Test", &v, TargetMode::Rust).unwrap();
+
         assert!(code.contains("struct Test"));
         assert!(code.contains("name: String"));
     }
@@ -38,6 +41,7 @@ mod tests {
     fn generate_typescript() {
         let v: Value = serde_json::from_str(JSON).unwrap();
         let code = generate("Test", &v, TargetMode::Typescript).unwrap();
+
         assert!(code.contains("interface Test"));
         assert!(code.contains("name: string"));
     }
@@ -46,6 +50,7 @@ mod tests {
     fn generate_typescript_typealias() {
         let v: Value = serde_json::from_str(JSON).unwrap();
         let code = generate("Test", &v, TargetMode::TypescriptTypeAlias).unwrap();
+
         assert!(code.contains("type Test"));
     }
 
@@ -53,6 +58,7 @@ mod tests {
     fn generate_json_schema() {
         let v: Value = serde_json::from_str(JSON).unwrap();
         let code = generate("Test", &v, TargetMode::JsonSchema).unwrap();
+
         assert!(code.contains("\"type\""));
         assert!(code.contains("Test"));
     }
@@ -61,6 +67,7 @@ mod tests {
     fn generate_kotlin() {
         let v: Value = serde_json::from_str(JSON).unwrap();
         let code = generate("Test", &v, TargetMode::KotlinJackson).unwrap();
+
         assert!(code.contains("class Test"));
     }
 
@@ -68,6 +75,7 @@ mod tests {
     fn generate_empty_object() {
         let v = json!({});
         let code = generate("Empty", &v, TargetMode::Rust).unwrap();
+
         assert!(code.contains("struct Empty"));
     }
 }
