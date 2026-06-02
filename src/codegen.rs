@@ -3,6 +3,11 @@ use crate::error::CliError;
 use json_typegen_shared::{Options, OutputMode, codegen};
 use serde_json::Value;
 
+/// Generates type-safe code from a JSON value for the given target language.
+///
+/// Delegates to `json_typegen_shared::codegen` under the hood.
+/// The JSON is serialized to a string first, then passed to the engine
+/// together with the root type name and output mode.
 pub fn generate(name: &str, json: &Value, mode: TargetMode) -> Result<String, CliError> {
     let json_string = serde_json::to_string(json)?;
     let mut options = Options::default();

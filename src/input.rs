@@ -5,6 +5,12 @@ use reqwest::blocking;
 use std::fs;
 use std::io::{self, Read};
 
+/// Collects all input samples from the configured sources.
+///
+/// Priority: remote URLs first, then local file paths, then stdin.
+/// Each source is parsed according to its format (auto-detected or forced).
+/// Multiple samples from the same source (JSON streaming, multi-doc YAML)
+/// are flattened into a single `Vec`.
 pub fn collect_samples(cli: &Cli) -> Result<Vec<serde_json::Value>, CliError> {
     let mut samples = Vec::new();
 
