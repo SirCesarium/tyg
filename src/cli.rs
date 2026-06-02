@@ -41,7 +41,7 @@ pub enum TargetMode {
 }
 
 #[derive(Parser)]
-#[command(name = "type-forge")]
+#[command(name = "tyg")]
 pub struct Cli {
     #[arg(help = "File paths to read from")]
     pub sources: Vec<String>,
