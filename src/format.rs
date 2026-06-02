@@ -40,6 +40,15 @@ pub fn parse_to_json(input: &str, format: Format) -> Result<Value, CliError> {
     }
 }
 
+pub fn parse_all(input: &str, format: Format) -> Result<Vec<Value>, CliError> {
+    match format {
+        Format::Json => serde_json::Deserializer::from_str(input)
+            .into_iter::<Value>()
+            .map(|r| r.map_err(CliError::from))
+            .collect(),
+        _ => Ok(vec![parse_to_json(input, format)?]),
+    }
+}
 pub fn detect_format(path: &str) -> Format {
     let ext = Path::new(path).extension().and_then(|e| e.to_str());
     match ext {
