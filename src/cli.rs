@@ -1,7 +1,7 @@
 use clap::{Parser, ValueEnum};
 use std::fmt;
 
-#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, ValueEnum)]
 pub enum Format {
     Json,
     Yaml,
@@ -22,7 +22,7 @@ impl fmt::Display for Format {
     }
 }
 
-#[derive(Copy, Clone, PartialEq, Eq, ValueEnum)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, ValueEnum)]
 pub enum TargetMode {
     #[value(alias = "rust")]
     Rust,
