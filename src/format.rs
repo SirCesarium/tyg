@@ -57,6 +57,8 @@ pub fn parse_to_json(input: &str, format: Format) -> Result<Value, CliError> {
                     map.insert(k, json!(b));
                 } else if let Ok(n) = v.parse::<i64>() {
                     map.insert(k, json!(n));
+                } else if let Ok(f) = v.parse::<f64>() {
+                    map.insert(k, json!(f));
                 } else {
                     map.insert(k, json!(v));
                 }
@@ -88,7 +90,7 @@ pub fn detect_format(path: &str) -> Format {
 }
 
 #[cfg(test)]
-#[allow(clippy::unwrap_used, clippy::expect_used)]
+#[allow(clippy::unwrap_used, clippy::expect_used, clippy::approx_constant)]
 mod tests {
     use super::*;
 
@@ -179,5 +181,84 @@ mod tests {
     fn parse_xml_err() {
         let result = parse_to_json("<bad", Format::Xml);
         assert!(result.is_err());
+    }
+
+    #[test]
+    fn parse_all_json_stream() {
+        let v = parse_all("[1]\n[2]\n", Format::Json).unwrap();
+        assert_eq!(v, vec![json!([1]), json!([2])]);
+    }
+
+    #[test]
+    fn parse_all_single() {
+        let v = parse_all(r#"{"a":1}"#, Format::Json).unwrap();
+        assert_eq!(v, vec![json!({"a": 1})]);
+    }
+
+    #[test]
+    fn parse_all_yaml() {
+        let v = parse_all("a: 1\n", Format::Yaml).unwrap();
+        assert_eq!(v, vec![json!({"a": 1})]);
+    }
+
+    #[test]
+    fn parse_all_toml() {
+        let v = parse_all("a = 1\n", Format::Toml).unwrap();
+        assert_eq!(v, vec![json!({"a": 1})]);
+    }
+
+    #[test]
+    fn parse_xml_attr_and_text_same_element() {
+        let v = parse_to_json(r#"<p id="1">hello</p>"#, Format::Xml).unwrap();
+        assert_eq!(v, json!({"id": "1", "text": "hello"}));
+    }
+
+    #[test]
+    fn parse_xml_nested_elements() {
+        let v = parse_to_json("<root><a><b><c>deep</c></b></a></root>", Format::Xml).unwrap();
+        assert_eq!(v, json!({"a": {"b": {"c": {"text": "deep"}}}}));
+    }
+
+    #[test]
+    fn parse_xml_empty_element() {
+        let v = parse_to_json("<root><a></a></root>", Format::Xml).unwrap();
+        assert_eq!(v, json!({"a": {}}));
+    }
+
+    #[test]
+    fn parse_yaml_err() {
+        let result = parse_to_json(": bad yaml", Format::Yaml);
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn parse_toml_err() {
+        let result = parse_to_json("a = \n", Format::Toml);
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn parse_properties_all_types() {
+        let v = parse_to_json(
+            "str=hello\nnum=42\nflag=true\nfloat=3.14\n",
+            Format::Properties,
+        )
+        .unwrap();
+        assert_eq!(
+            v,
+            json!({"str": "hello", "num": 42, "flag": true, "float": 3.14})
+        );
+    }
+
+    #[test]
+    fn parse_empty_input_err() {
+        let result = parse_to_json("", Format::Json);
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn parse_all_empty() {
+        let result = parse_all("", Format::Json).unwrap();
+        assert!(result.is_empty());
     }
 }

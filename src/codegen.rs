@@ -1,7 +1,7 @@
 use crate::cli::TargetMode;
 use crate::error::CliError;
 use json_typegen_shared::{Options, OutputMode, codegen};
-use serde_json::Value;
+use serde_json::{Value, json};
 
 pub fn generate(name: &str, json: &Value, mode: TargetMode) -> Result<String, CliError> {
     let json_string = serde_json::to_string(json)?;
@@ -16,4 +16,57 @@ pub fn generate(name: &str, json: &Value, mode: TargetMode) -> Result<String, Cl
         TargetMode::Shape => OutputMode::Shape,
     };
     codegen(name, &json_string, options).map_err(|e| CliError::Codegen(e.to_string()))
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used)]
+mod tests {
+    use super::*;
+
+    const JSON: &str = r#"{"name":"foo","count":42}"#;
+
+    #[test]
+    fn generate_rust() {
+        let v: Value = serde_json::from_str(JSON).unwrap();
+        let code = generate("Test", &v, TargetMode::Rust).unwrap();
+        assert!(code.contains("struct Test"));
+        assert!(code.contains("name: String"));
+    }
+
+    #[test]
+    fn generate_typescript() {
+        let v: Value = serde_json::from_str(JSON).unwrap();
+        let code = generate("Test", &v, TargetMode::Typescript).unwrap();
+        assert!(code.contains("interface Test"));
+        assert!(code.contains("name: string"));
+    }
+
+    #[test]
+    fn generate_typescript_typealias() {
+        let v: Value = serde_json::from_str(JSON).unwrap();
+        let code = generate("Test", &v, TargetMode::TypescriptTypeAlias).unwrap();
+        assert!(code.contains("type Test"));
+    }
+
+    #[test]
+    fn generate_json_schema() {
+        let v: Value = serde_json::from_str(JSON).unwrap();
+        let code = generate("Test", &v, TargetMode::JsonSchema).unwrap();
+        assert!(code.contains("\"type\""));
+        assert!(code.contains("Test"));
+    }
+
+    #[test]
+    fn generate_kotlin() {
+        let v: Value = serde_json::from_str(JSON).unwrap();
+        let code = generate("Test", &v, TargetMode::KotlinJackson).unwrap();
+        assert!(code.contains("class Test"));
+    }
+
+    #[test]
+    fn generate_empty_object() {
+        let v = json!({});
+        let code = generate("Empty", &v, TargetMode::Rust).unwrap();
+        assert!(code.contains("struct Empty"));
+    }
 }
