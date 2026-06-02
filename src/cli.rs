@@ -1,5 +1,4 @@
 use clap::{Parser, ValueEnum};
-use std::fmt;
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq, ValueEnum)]
 pub enum Format {
@@ -8,18 +7,6 @@ pub enum Format {
     Toml,
     Xml,
     Properties,
-}
-
-impl fmt::Display for Format {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Self::Json => write!(f, "json"),
-            Self::Yaml => write!(f, "yaml"),
-            Self::Toml => write!(f, "toml"),
-            Self::Xml => write!(f, "xml"),
-            Self::Properties => write!(f, "properties"),
-        }
-    }
 }
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq, ValueEnum)]

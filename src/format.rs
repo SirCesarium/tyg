@@ -13,7 +13,7 @@ fn clean_xml_value(v: &mut Value) {
                 if let Some(mut val) = map.remove(&key) {
                     clean_xml_value(&mut val);
                     let new_key = key.strip_prefix('@').unwrap_or(&key);
-                    let new_key = if new_key == "$text" { "text" } else { new_key };
+                    let new_key = if new_key == "$text" { "#text" } else { new_key };
                     map.insert(new_key.to_string(), val);
                 }
             }
@@ -30,7 +30,7 @@ fn clean_xml_value(v: &mut Value) {
 pub fn parse_to_json(input: &str, format: Format) -> Result<Value, CliError> {
     match format {
         Format::Json => Ok(serde_json::from_str(input)?),
-        Format::Yaml => serde_yaml::from_str(input).map_err(|e| CliError::Parse {
+        Format::Yaml => serde_saphyr::from_str(input).map_err(|e| CliError::Parse {
             format: "yaml",
             msg: e.to_string(),
         }),
@@ -74,9 +74,15 @@ pub fn parse_all(input: &str, format: Format) -> Result<Vec<Value>, CliError> {
             .into_iter::<Value>()
             .map(|r| r.map_err(CliError::from))
             .collect(),
+        Format::Yaml => serde_saphyr::from_slice_multiple(input.as_bytes())
+            .map_err(|e| CliError::Parse {
+                format: "yaml",
+                msg: e.to_string(),
+            }),
         _ => Ok(vec![parse_to_json(input, format)?]),
     }
 }
+
 pub fn detect_format(path: &str) -> Format {
     let ext = Path::new(path).extension().and_then(|e| e.to_str());
     match ext {
@@ -158,7 +164,7 @@ mod tests {
     #[test]
     fn parse_xml_ok() {
         let v = parse_to_json("<root><a>1</a><b>x</b></root>", Format::Xml).unwrap();
-        assert_eq!(v, json!({"a": {"text": "1"}, "b": {"text": "x"}}));
+        assert_eq!(v, json!({"a": {"#text": "1"}, "b": {"#text": "x"}}));
     }
 
     #[test]
@@ -168,7 +174,7 @@ mod tests {
             Format::Xml,
         )
         .unwrap();
-        assert_eq!(v, json!({"name": {"lang": "en", "text": "foo"}, "id": "5"}));
+        assert_eq!(v, json!({"name": {"lang": "en", "#text": "foo"}, "id": "5"}));
     }
 
     #[test]
@@ -210,13 +216,13 @@ mod tests {
     #[test]
     fn parse_xml_attr_and_text_same_element() {
         let v = parse_to_json(r#"<p id="1">hello</p>"#, Format::Xml).unwrap();
-        assert_eq!(v, json!({"id": "1", "text": "hello"}));
+        assert_eq!(v, json!({"id": "1", "#text": "hello"}));
     }
 
     #[test]
     fn parse_xml_nested_elements() {
         let v = parse_to_json("<root><a><b><c>deep</c></b></a></root>", Format::Xml).unwrap();
-        assert_eq!(v, json!({"a": {"b": {"c": {"text": "deep"}}}}));
+        assert_eq!(v, json!({"a": {"b": {"c": {"#text": "deep"}}}}));
     }
 
     #[test]
