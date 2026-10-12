@@ -68,6 +68,8 @@ cargo install tyg
 
 URL requests time out after 30 seconds.
 
+Run `tyg` with no arguments in a terminal to print the help instead of waiting on stdin.
+
 ## Unix philosophy
 
 Pipe data from anywhere — like [zipcrawl](https://github.com/SirCesarium/zipcrawl) to extract types from ZIP contents without extraction:
