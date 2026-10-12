@@ -17,7 +17,14 @@ tyg a.json b.json --lang rust > models.rs   # merge multiple samples
 
 ## How it works
 
-Feed it one or more samples (files, URLs, stdin, any mix). It parses them, merges everything into a single shape, and generates the most specific type that covers all inputs. Multiple values (JSON streaming, multi-document YAML with `---`) merge the same way.
+Feed it one or more samples (files, URLs, stdin, any mix). It parses them, merges everything into a single shape, and generates types from that shape. Multiple values (JSON streaming, multi-document YAML with `---`) merge the same way.
+
+### Merge rules
+
+- **Objects**: union of keys, merged recursively.
+- **Arrays**: concatenated, so the inferred element type covers every sample (note this changes the element count, not just the type).
+- **Scalars**: the last sample wins. When two samples disagree on the *type* of the same key, a warning is printed to stderr, e.g. `tyg: warning: type conflict at \`user.id\`: number -> string (keeping the last sample)`.
+- **`null`**: never overwrites a known value, and a known value never degrades back to `null`.
 
 Format auto-detected from file extension. Override with `--format`.
 
