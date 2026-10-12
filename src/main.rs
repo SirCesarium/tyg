@@ -15,7 +15,21 @@ fn main() -> miette::Result<()> {
         return Ok(());
     }
 
-    let merged = merge::merge_samples(samples);
+    let (merged, conflicts) = merge::merge_samples(samples);
+
+    for conflict in &conflicts {
+        let path = if conflict.path.is_empty() {
+            "root"
+        } else {
+            conflict.path.as_str()
+        };
+
+        eprintln!(
+            "tyg: warning: type conflict at `{path}`: {} -> {} (keeping the last sample)",
+            conflict.existing, conflict.incoming
+        );
+    }
+
     let code = codegen::generate(&cli.name, &merged, cli.lang)?;
 
     println!("{code}");
