@@ -5,7 +5,7 @@ edition = "2024"
 authors = ["SirCesarium"]
 description = "Generate types from several data sources to multiple languages"
 license = "MIT"
-repository = "https://github.com/SirCesarium/type-forge"
+repository = "https://github.com/SirCesarium/tyg"
 readme = "README.md"
 keywords = [
   "codegen",
