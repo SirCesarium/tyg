@@ -4,6 +4,10 @@ use crate::format;
 use reqwest::blocking;
 use std::fs;
 use std::io::{self, Read};
+use std::time::Duration;
+
+/// Give up on unresponsive hosts instead of hanging forever.
+const REQUEST_TIMEOUT: Duration = Duration::from_secs(30);
 
 /// Collects all input samples from the configured sources.
 ///
@@ -15,10 +19,16 @@ use std::io::{self, Read};
 pub fn collect_samples(cli: &Cli) -> Result<Vec<serde_json::Value>, CliError> {
     let mut samples = Vec::new();
 
-    for url in &cli.url {
-        let res = blocking::get(url)?.text()?;
+    if !cli.url.is_empty() {
+        let client = blocking::Client::builder()
+            .timeout(REQUEST_TIMEOUT)
+            .build()?;
 
-        samples.extend(format::parse_all(&res, cli.format.unwrap_or(Format::Json))?);
+        for url in &cli.url {
+            let res = client.get(url).send()?.text()?;
+
+            samples.extend(format::parse_all(&res, cli.format.unwrap_or(Format::Json))?);
+        }
     }
 
     for path in &cli.sources {

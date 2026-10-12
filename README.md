@@ -66,6 +66,8 @@ cargo install tyg
 | `-n, --name` | Root type name (default: `Root`) |
 | `-l, --lang` | Target: `rust`, `typescript`, `typescript-type-alias`, `kotlin-jackson`, `kotlin-kotlinx`, `json-schema`, `shape` |
 
+URL requests time out after 30 seconds.
+
 ## Unix philosophy
 
 Pipe data from anywhere — like [zipcrawl](https://github.com/SirCesarium/zipcrawl) to extract types from ZIP contents without extraction:
