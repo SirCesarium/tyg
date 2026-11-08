@@ -1,0 +1,146 @@
+name: Bug report
+description: Report a problem with tyg
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug! Please fill out the sections below so we can reproduce and fix the issue.
+
+        Before opening a new issue, please search the existing issues to avoid duplicates.
+
+        > [!NOTE]
+        > tyg is in maintenance mode. Bug fixes and dependency updates are prioritized; new features may be declined.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: A clear and concise description of the bug.
+      placeholder: What went wrong?
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Include the exact command you ran and how the input was provided (file, stdin, or URL).
+      placeholder: |
+        1. Run `tyg data.json --lang typescript`
+        2. ...
+        3. See error
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: input
+    attributes:
+      label: Minimal input sample
+      description: Paste the smallest input that reproduces the problem. Remove any private data.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected output
+      description: What did you expect tyg to generate?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual output
+      description: Paste what tyg actually generated, including any warning printed to stderr.
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: tyg version
+      description: Run `tyg --version` and paste the output here.
+      placeholder: "1.1.1"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: input_format
+    attributes:
+      label: Input format
+      description: Which input format is involved?
+      options:
+        - JSON
+        - YAML
+        - TOML
+        - XML
+        - .properties
+        - Multiple formats
+        - Auto-detected / not sure
+    validations:
+      required: true
+
+  - type: dropdown
+    id: output_language
+    attributes:
+      label: Output language
+      description: Which target language were you generating?
+      options:
+        - rust
+        - typescript
+        - typescript-type-alias
+        - kotlin-jackson
+        - kotlin-kotlinx
+        - json-schema
+        - shape
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options:
+        - Linux
+        - macOS
+        - Windows
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: architecture
+    attributes:
+      label: Architecture
+      description: The CPU architecture you are running on.
+      placeholder: "x86_64, aarch64, ..."
+
+  - type: dropdown
+    id: install_method
+    attributes:
+      label: Installation method
+      description: How did you install tyg?
+      options:
+        - cargo install
+        - Built from source
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional context
+      description: Add any other context, links, or sample files that help explain the problem.
+
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Confirmation
+      options:
+        - label: I have searched the existing issues and this is not a duplicate.
+          required: true

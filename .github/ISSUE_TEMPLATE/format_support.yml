@@ -1,0 +1,70 @@
+name: Format support
+description: Request support for a new input format or output language
+title: "[Format]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template to request an input format or output language that tyg does not support yet.
+
+        Before opening a request, check the input formats and output languages tables in the README.
+
+  - type: input
+    id: name
+    attributes:
+      label: Format or language name
+      description: The name of the input format or output language.
+      placeholder: "Example: MessagePack, CSV, Go structs, Python dataclasses"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Type
+      description: Is this about reading data or generating code?
+      options:
+        - Input format
+        - Output language
+        - Both
+    validations:
+      required: true
+
+  - type: input
+    id: docs
+    attributes:
+      label: Documentation or specification
+      description: Link to the format specification or the language's serialization docs.
+      placeholder: "https://..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: sample
+    attributes:
+      label: Example input or expected output
+      description: For an input format, paste a representative sample. For an output language, paste the type definition you would expect tyg to generate.
+    validations:
+      required: true
+
+  - type: input
+    id: proposed_value
+    attributes:
+      label: Proposed flag value
+      description: What should `--format` or `--lang` receive for this?
+      placeholder: "Example: --format csv, --lang go"
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional context
+      description: Add any other details, edge cases, or libraries that would help implement support.
+
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Confirmation
+      options:
+        - label: I have searched the existing issues and this is not a duplicate.
+          required: true
