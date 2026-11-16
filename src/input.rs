@@ -10,6 +10,16 @@ use std::time::Duration;
 /// Give up on unresponsive hosts instead of hanging forever.
 const REQUEST_TIMEOUT: Duration = Duration::from_secs(30);
 
+/// GitHub and other APIs reject requests that do not identify themselves.
+const USER_AGENT: &str = concat!("tyg/", env!("CARGO_PKG_VERSION"));
+
+fn build_client() -> Result<blocking::Client, CliError> {
+    Ok(blocking::Client::builder()
+        .user_agent(USER_AGENT)
+        .timeout(REQUEST_TIMEOUT)
+        .build()?)
+}
+
 /// Collects all input samples from the configured sources.
 ///
 /// Remote URLs and local file paths can be freely mixed: every URL and every
@@ -23,12 +33,10 @@ pub fn collect_samples(cli: &Cli) -> Result<Vec<serde_json::Value>, CliError> {
     let mut samples = Vec::new();
 
     if !cli.url.is_empty() {
-        let client = blocking::Client::builder()
-            .timeout(REQUEST_TIMEOUT)
-            .build()?;
+        let client = build_client()?;
 
         for url in &cli.url {
-            let res = client.get(url).send()?.text()?;
+            let res = client.get(url).send()?.error_for_status()?.text()?;
 
             samples.extend(format::parse_all(&res, cli.format.unwrap_or(Format::Json))?);
         }
