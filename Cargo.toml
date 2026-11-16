@@ -2,6 +2,7 @@
 name = "tyg"
 version = "1.1.1"
 edition = "2024"
+rust-version = "1.99"
 authors = ["SirCesarium"]
 description = "Generate types from several data sources to multiple languages"
 license = "MIT"
