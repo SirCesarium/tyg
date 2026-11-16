@@ -12,6 +12,9 @@ pub fn generate(name: &str, json: &Value, mode: TargetMode) -> Result<String, Cl
     let json_string = serde_json::to_string(json)?;
     let mut options = Options::default();
 
+    options.derives =
+        "Default, Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize".into();
+
     options.output_mode = match mode {
         TargetMode::Rust => OutputMode::Rust,
         TargetMode::Typescript => OutputMode::Typescript,
@@ -40,6 +43,9 @@ mod tests {
 
         assert!(code.contains("struct Test"));
         assert!(code.contains("name: String"));
+        assert!(code.contains("use serde::Deserialize;"));
+        assert!(code.contains("use serde::Serialize;"));
+        assert!(!code.contains("serde_derive"));
     }
 
     #[test]
