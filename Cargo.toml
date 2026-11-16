@@ -24,7 +24,7 @@ miette = { version = "7.6.0", features = ["fancy"] }
 quick-xml = { version = "0.42.0", features = ["serialize"] }
 reqwest = { version = "0.13.4", default-features = false, features = [
   "blocking",
-  "native-tls",
+  "rustls",
   "charset",
   "http2",
 ] }
