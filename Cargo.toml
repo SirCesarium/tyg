@@ -44,3 +44,21 @@ panic = "abort"
 unwrap_used = "deny"
 expect_used = "deny"
 absolute_paths = "deny"
+
+[package.metadata.deb]
+maintainer = "Cesarium <239650612+SirCesarium@users.noreply.github.com>"
+copyright = "2026, Cesarium"
+license-file = ["LICENSE", "0"]
+section = "utility"
+depends = "$auto"
+extended-description = "Generate types from several data sources to multiple languages."
+assets = [
+    ["target/release/tyg", "usr/bin/", "755"],
+    ["README.md", "usr/share/doc/tyg/README.md", "644"],
+]
+
+[package.metadata.generate-rpm]
+assets = [
+    { source = "target/release/tyg", dest = "/usr/bin/tyg", mode = "755" },
+    { source = "LICENSE", dest = "/usr/share/licenses/tyg/LICENSE", mode = "644" },
+]
